@@ -1,0 +1,16 @@
+<ion-view view-title="Movimientos">
+  <ion-content>
+    <ion-list>
+    <div class="row">
+      <div class="col"><button class="button button-energized" ng-click="grabar()">Grabar sonidos</button></div>
+      <div class="col"><button class="button button-calm" ng-click="guardarJson()">Detener grabaci&oacute;n</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><button class="button button-balanced" ng-click="play()">Reproducir sonidos</button></div>
+      <div class="col"><button class="button button-assertive" ng-click="pausar()">Pausar sonidos</button></div>
+    </div><br>
+      <div>Posici&oacute;n en coordenadas: {{position.x}}--{{position.y}}--{{position.z}}</div>
+      <div>Posici&oacute;n: {{filenamePosicion}}</div>
+    </ion-list>
+  </ion-content>
+</ion-view>

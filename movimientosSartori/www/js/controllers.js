@@ -1,8 +1,41 @@
 angular.module('starter.controllers', ['ionic', 'ngCordova'])
+.factory('login', function () {
+    var logueado = false;
+    var login = {};
+    login.setLogueado = function (valor) {
+      logueado = valor;
+    };
+    login.getLogueado = function () {
+      return logueado;
+    };
+    return login;
+  })
 
-.controller('DashCtrl', function($scope) {})
+.controller('MiCuentaCtrl', ['$scope', '$state', 'login', "$ionicPopup", function ($scope, $state, login, $ionicPopup) {
+    $scope.getLogueado = login.getLogueado;
+    $scope.setLogueado = login.setLogueado;
+    $scope.form = {}
+    $scope.error = false;
+    $scope.form.usuario = "";
+    $scope.showAlert = function () {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Movimientos',
+        template: 'Error al iniciar sesi\u00f3n'
+      });
+    }
+    $scope.Ingresar = function () {
+      console.log("usuario: " + $scope.form.usuario);
+      if ($scope.form.usuario == 1) {
+        $scope.setLogueado(true);
+        $state.go('tab.movimientos');
+      } else {
+        $scope.showAlert();
+      }
+    }
 
-.controller('ChatsCtrl', function($scope, Chats, $cordovaDeviceMotion, $cordovaMedia) {
+  }])
+
+.controller('MovimientosCtrl', function($scope, Chats, $cordovaDeviceMotion, $cordovaMedia) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -27,11 +60,13 @@ angular.module('starter.controllers', ['ionic', 'ngCordova'])
     x:0,y:0,z:0
   };
 
-  $scope.filename =""
+  $scope.filename ="";
+  $scope.filenamePosicion = "";
   $scope.grabar = function(){
     devMot.getCurrentAcceleration().then(function(result) {
       $scope.position = result;
-      $scope.filename = getFileName(result)
+      $scope.filename = getFileName(result);
+      $scope.filenamePosicion = $scope.filename.split('.')[0];
     media =$cordovaMedia.newMedia($scope.filename);
     media.startRecord();
     }, function(err) {
@@ -99,7 +134,7 @@ angular.module('starter.controllers', ['ionic', 'ngCordova'])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('AcercaDeCtrl', function($scope) {
   $scope.settings = {
     enableFriends: true
   };
