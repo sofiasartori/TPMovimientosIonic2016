@@ -20,10 +20,13 @@ angular.module('starter.controllers', ['ionic', 'ngCordova'])
   var src = "arrba.amr"
   var media = "";
   var devMot = $cordovaDeviceMotion;
- 
+  var audioAnterior = "";
+  var audioActual = "";
+  $scope.watch = null;
   $scope.position={
     x:0,y:0,z:0
   };
+
   $scope.filename =""
   $scope.grabar = function(){
     devMot.getCurrentAcceleration().then(function(result) {
@@ -39,8 +42,29 @@ angular.module('starter.controllers', ['ionic', 'ngCordova'])
   $scope.guardarJson=function(){
     media.stopRecord();
   }
+  $scope.pausar = function(){
+    $scope.watch.clearWatch();
+    media.stop();  
+  }
  $scope.play=function(){
-    media.play();
+  if(!$scope.watch)
+    $cordovaDeviceMotion.clearWatch($scope.watch);  
+  var options = { frequency:1000 };
+    $scope.watch = $cordovaDeviceMotion.watchAcceleration(options);
+    $scope.watch.then(
+      null,
+      function(error) {
+      // An error occurred
+      },
+      function(result) {
+        audioAnterior = audioActual;
+        audioActual = getFileName(result);
+        if((audioActual != audioAnterior)&&(audioActual!="")){
+          media = $cordovaMedia.newMedia(audioActual);
+          media.play();
+        }        
+    });
+    
   }
 
   function getFileName(position){
@@ -56,7 +80,8 @@ angular.module('starter.controllers', ['ionic', 'ngCordova'])
       return archivosAudio.izquierda;
     }else if(getAbsDirection(position.x)&&(!getAbsDirection(position.y))&&getAbsDirection(position.z)){
       return archivosAudio.parado;
-    }
+    }else
+      return "";
   }
   function getAbsDirection(val){
     if(Math.abs(val)<5){
